@@ -1,0 +1,6 @@
+{
+  "name": "Sổ Chủ Nhiệm Điện Tử",
+  "description": "Hệ thống quản lý lớp chủ nhiệm, thi đua rèn luyện và chuyên cần học sinh trực quan",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
