@@ -7,12 +7,12 @@ const env = (import.meta as any).env || {};
 
 // Firebase configuration using official project configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyArDNWZinS8_z9tyFYCUyItFfXFZZVzt68",
-  authDomain: "websochunhiem.firebaseapp.com",
-  projectId: "websochunhiem",
-  storageBucket: "websochunhiem.firebasestorage.app",
-  messagingSenderId: "95131513833",
-  appId: "1:95131513833:web:2ec7522037a335324c5178"
+  apiKey: "AIzaSyAAriGnWDfEEbRJSzNG66oK7pNQ5dj_08M",
+  authDomain: "so-chu-nhiem-dien-tu-9eaed.firebaseapp.com",
+  projectId: "so-chu-nhiem-dien-tu-9eaed",
+  storageBucket: "so-chu-nhiem-dien-tu-9eaed.firebasestorage.app",
+  messagingSenderId: "358382190291",
+  appId: "1:358382190291:web:08e3c42dd723960a039e26",
 };
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
