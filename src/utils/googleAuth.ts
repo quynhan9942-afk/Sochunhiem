@@ -57,9 +57,13 @@ export function createTeacherProfileFromGooglePayload(payload: {
   name?: string;
   picture?: string;
 }): TeacherProfile {
-  const userEmail = (payload.email || 'quynhan9942@gmail.com').toLowerCase();
+  const userEmail = (payload.email || '').trim().toLowerCase();
+
+  if (userEmail !== 'quynhan9942@gmail.com') {
+    throw new Error('Tài khoản Google này không được cấp quyền truy cập Sổ Chủ Nhiệm Điện Tử.');
+  }
   const displayName = payload.name || (userEmail.includes('quynhan') ? 'ThS. Nguyễn Quỳnh An' : userEmail.split('@')[0]);
-  const photoURL = payload.picture || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150';
+  const photoURL = payload.picture || '';
 
   const existingList = loadAuthorizedTeachers();
   let matched = existingList.find((t) => t.email.toLowerCase() === userEmail);

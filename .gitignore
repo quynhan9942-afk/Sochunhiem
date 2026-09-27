@@ -1,0 +1,9 @@
+node_modules/
+dist/
+*.backup
+*.bak
+*.bak-*
+*.broken
+.env
+.env.*
+!.env.example

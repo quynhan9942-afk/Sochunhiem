@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { X, AlertTriangle, ShieldCheck, Sparkles, Eye } from 'lucide-react';
 import { TeacherProfile } from '../types';
 import { loginWithGoogle } from '../utils/firebase';
-import { GOOGLE_CLIENT_ID, parseJwt, createTeacherProfileFromGooglePayload, clearUserSession } from '../utils/googleAuth';
+import { createTeacherProfileFromGooglePayload, clearUserSession } from '../utils/googleAuth';
 
 interface AuthModalProps {
   currentTeacher: TeacherProfile | null;
@@ -20,48 +20,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Initialize Google Identity Services (GIS) button and prompt
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.google?.accounts?.id) {
-      try {
-        window.google.accounts.id.initialize({
-          client_id: GOOGLE_CLIENT_ID,
-          callback: (response: any) => {
-            if (response?.credential) {
-              const payload = parseJwt(response.credential);
-              if (payload) {
-                const profile = createTeacherProfileFromGooglePayload({
-                  sub: payload.sub,
-                  email: payload.email,
-                  name: payload.name,
-                  picture: payload.picture,
-                });
-                onLoginSuccess(profile);
-                onClose();
-              }
-            }
-          },
-        });
-
-        const container = document.getElementById('google-gis-button-slot');
-        if (container) {
-          container.innerHTML = '';
-          window.google.accounts.id.renderButton(container, {
-            theme: 'outline',
-            size: 'large',
-            type: 'standard',
-            shape: 'pill',
-            text: 'signin_with',
-            logo_alignment: 'left',
-            locale: 'vi',
-            width: 320,
-          });
-        }
-      } catch (err) {
-        console.warn('GIS initialization notice:', err);
-      }
-    }
-  }, [onLoginSuccess, onClose]);
 
   // Google Login Handler
   const handleGoogleSignIn = async () => {
@@ -69,24 +27,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setErrorMessage(null);
 
     try {
-      // 1. Trigger Firebase Google Auth
-      let googleUser: { uid: string; email: string; displayName: string; photoURL: string };
-      try {
-        googleUser = await loginWithGoogle();
-      } catch (err: any) {
-        // Fallback for pop-up blocked / iframe sandbox environment:
-        const userEmail = 'quynhan9942@gmail.com';
-        const defaultName = 'ThS. Nguyễn Quỳnh An';
-        
-        googleUser = {
-          uid: 'google_uid_' + Date.now(),
-          email: userEmail,
-          displayName: defaultName,
-          photoURL: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150',
-        };
+      const googleUser = await loginWithGoogle();
+
+      if (googleUser.email.trim().toLowerCase() !== "quynhan9942@gmail.com") {
+        throw new Error("Tài khoản Google này không được cấp quyền truy cập Sổ Chủ Nhiệm Điện Tử.");
       }
 
-      // 2. Convert to profile with Admin role and save to localStorage
       const profile = createTeacherProfileFromGooglePayload({
         sub: googleUser.uid,
         email: googleUser.email,
@@ -97,8 +43,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       onLoginSuccess(profile);
       onClose();
     } catch (error: any) {
-      console.error('Login error:', error);
-      setErrorMessage(error.message || 'Đăng nhập Google thất bại. Vui lòng thử lại.');
+      console.error("Login error:", error);
+      setErrorMessage(error.message || "Đăng nhập Google thất bại. Vui lòng thử lại.");
     } finally {
       setLoading(false);
     }
@@ -144,7 +90,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
           {/* Primary Google Sign-In Button & GIS Slot */}
           <div className="space-y-2">
-            <div id="google-gis-button-slot" className="flex justify-center min-h-[40px]"></div>
 
             <button
               type="button"

@@ -126,9 +126,7 @@ export default function App() {
   // Authentication & Access Control State
   const [teacherProfile, setTeacherProfile] = useState<TeacherProfile | null>(() => {
     const saved = loadSavedUserSession();
-    if (saved) return saved;
-    const list = loadAuthorizedTeachers();
-    return list.find((t) => t.isAuthorized) || list[0] || null;
+    return saved || null;
   });
 
   const [authMode, setAuthMode] = useState<AuthMode>(() => {
@@ -136,8 +134,7 @@ export default function App() {
       return 'GUEST';
     }
     const saved = loadSavedUserSession();
-    if (saved) return 'TEACHER';
-    return 'TEACHER';
+    return saved ? 'TEACHER' : 'GUEST';
   });
 
   const handleLogout = () => {
